@@ -11,11 +11,11 @@ const db = new sqlite3.Database('./db/trending-hashtag-service.sqlite', (err) =>
 
 const runQuery = (query, params = []) => {
     return new Promise((resolve, reject) => {
-        db.run(query, params, (err) => {
+        db.all(query, params, (err, rows) => {
             if (err) {
                 reject(err);
             } else {
-                resolve(this);
+                resolve(rows);
             }
         });
     });
@@ -84,7 +84,7 @@ const upsertHashtags = async (hashtags) => {
                         ON CONFLICT(hashtag) DO UPDATE SET instances = instances + 1`;
 
         await Promise.all(hashtags.map( hashtag => {
-            runQuery(query, [hashtag])
+            runQuery(query, [hashtag]);
         }));
 
         await runQuery('COMMIT');
@@ -95,9 +95,23 @@ const upsertHashtags = async (hashtags) => {
     }
 };
 
+const fetchTrendingHashtags = async () => {
+    const query = `SELECT hashtag FROM hashtags
+                    ORDER BY instances DESC
+                    LIMIT 25`;
+    
+    try {
+        const result = await runQuery(query);
+        return result.map(row => row.hashtag);
+    } catch (err) {
+        throw err;
+    }
+};
+
 
 module.exports = {
     createTables,
     saveTweet,
-    upsertHashtags
+    upsertHashtags,
+    fetchTrendingHashtags
 };

@@ -9,11 +9,18 @@ app.use(express.json());
 
 db.createTables();
 
-app.get('/', (req, res) => {
-  res.status(200).json({ message: "" })
-  const { name } = req.query;
+app.get('/trending-hashtags', async (req, res) => {
+  try {
+    const start = Date.now();
+    const hashtags = await db.fetchTrendingHashtags();
+    const end = Date.now();
 
-  tweetQueue.add('workerHelloWorld', { name: name});
+    console.log(`Fetched trending hashtags in ${end - start}ms`);
+
+    res.status(200).json({ hashtags: hashtags })
+  } catch (err) {
+    res.status(500).json({ message: "Unknown error fetching trending hashtags." });
+  }
 });
 
 app.post('/tweet', async (req, res) => {
