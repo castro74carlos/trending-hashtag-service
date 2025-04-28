@@ -6,6 +6,10 @@ const worker = new Worker('tweetQueue', async job => {
         const { name } = job.data;
         console.log(`Hello from the worker, ${name}`)
     }
+    
+    if (job.name === 'processHashtagsForTweet') {
+        
+    }
 }, { connection });
 
 worker.on('completed', job => {

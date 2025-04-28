@@ -62,9 +62,17 @@ const saveTweet = async (tweet) => {
     const hash = crypto.createHash('sha256')
                         .update(tweet)
                         .digest('latin1');
-    const query = 'INSERT INTO tweets (hash), VALUES (?)';
+    const query = 'INSERT INTO tweets (hash) VALUES (?)';
 
-    await runQuery(query, [hash]);
+    try {
+        await runQuery(query, [hash]);
+    } catch (err) {
+        if (err.code === 'SQLITE_CONSTRAINT') {
+            throw new Error('Tweet already exists.');
+        } else {
+            throw new Error(err.message);
+        }
+    }
 };
 
 

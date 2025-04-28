@@ -3,7 +3,7 @@ const db = require('./db');
 const tweetQueue = require('./queue');
 
 const app = express()
-const port = 3000
+const port = 8080
 
 app.use(express.json());
 
@@ -16,13 +16,13 @@ app.get('/', (req, res) => {
   tweetQueue.add('workerHelloWorld', { name: name});
 });
 
-app.post('/tweet', (req, res) => {
+app.post('/tweet', async (req, res) => {
   const { tweet } = req.body;
   
   try {
     if (tweet) {
     // Attempt to persist tweet  
-    db.saveTweet(tweet);
+    await db.saveTweet(tweet);
 
     res.status(201).json({ message: "Tweet has been registered." });
 
@@ -33,11 +33,7 @@ app.post('/tweet', (req, res) => {
       res.status(400).json({ message: "Invalid value for property \'tweet\'." });
     }
   } catch (err) {
-    if (err.code === 'SQLITE_CONSTRAINT') {
-      res.status(400).json({ message: "Unable to register tweet, tweet has already been submitted." });
-    } else {
-      res.status(500).json({ message: "Error registering tweet." });
-    }
+    res.status(404).json({ message: `Error registering tweet, ${err.message}` });
   }
 });
 
