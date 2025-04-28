@@ -75,8 +75,29 @@ const saveTweet = async (tweet) => {
     }
 };
 
+const upsertHashtags = async (hashtags) => {
+    if (!hashtags.length) return;
+
+    await runQuery('BEGIN TRANSACTION');
+    try {
+        const query = `INSERT INTO hashtags (hashtag, instances) VALUES (?, 1)
+                        ON CONFLICT(hashtag) DO UPDATE SET instances = instances + 1`;
+
+        await Promise.all(hashtags.map( hashtag => {
+            runQuery(query, [hashtag])
+        }));
+
+        await runQuery('COMMIT');
+    } catch (err) {
+        await runQuery('ROLLBACK');
+        console.error('Error upserting hashtags', err);
+        throw err;
+    }
+};
+
 
 module.exports = {
     createTables,
-    saveTweet
+    saveTweet,
+    upsertHashtags
 };
