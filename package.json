@@ -1,0 +1,25 @@
+{
+  "name": "trending-hashtag-service",
+  "version": "1.0.0",
+  "description": "Service that tracks trending hashtags.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/castro74carlos/trending-hashtag-service.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/castro74carlos/trending-hashtag-service/issues"
+  },
+  "homepage": "https://github.com/castro74carlos/trending-hashtag-service#readme",
+  "dependencies": {
+    "express": "^5.1.0",
+    "sqlite3": "^5.1.7"
+  }
+}
