@@ -8,7 +8,13 @@ const db = new sqlite3.Database('./db/trending-hashtag-service.sqlite', (err) =>
     }
 });
 
-// TODO: Create tables here
-// db.run();
+db.run(`
+    CREATE TABLE IF NOT EXISTS tweets (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        hash TEXT NOT NULL UNIQUE
+    )
+`);
+
+
 
 module.exports = db;

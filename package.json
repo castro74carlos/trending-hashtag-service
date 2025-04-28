@@ -5,7 +5,11 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/server.js"
+    "start": "concurrently \"npm run start-redis\" \"npm run start-server\" \"npm run start-worker\"",
+    "start-redis": "redis-server",
+    "start-server": "node src/server.js",
+    "start-worker": "wait-on tcp:localhost:6379 && node src/worker.js"
+    
   },
   "repository": {
     "type": "git",
@@ -19,7 +23,12 @@
   },
   "homepage": "https://github.com/castro74carlos/trending-hashtag-service#readme",
   "dependencies": {
+    "bullmq": "^5.51.1",
     "express": "^5.1.0",
     "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "wait-on": "^8.0.3"
   }
 }
